@@ -376,7 +376,7 @@ public class PreviewActivity extends AppCompatActivity implements PreviewPhotosA
                         , Setting.count), Toast.LENGTH_SHORT).show();
 
             } else if (Setting.showVideo) {
-                Toast.makeText(getApplicationContext(), getString(R.string.selector_reach_max_hint_easy_photos,
+                Toast.makeText(getApplicationContext(), getString(R.string.selector_reach_max_image_hint_easy_photos,
                         Setting.count), Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.selector_reach_max_image_hint_easy_photos,

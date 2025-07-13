@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
