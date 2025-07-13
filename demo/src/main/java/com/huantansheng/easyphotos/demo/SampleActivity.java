@@ -74,9 +74,16 @@ public class SampleActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
         initView();
-        if (PermissionUtil.checkAndRequestPermissionsInActivity(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            preLoadAlbums();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (PermissionUtil.checkAndRequestPermissionsInActivity(this,
+                    Manifest.permission.READ_MEDIA_IMAGES)) {
+                preLoadAlbums();
+            }
+        } else {
+            if (PermissionUtil.checkAndRequestPermissionsInActivity(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                preLoadAlbums();
+            }
         }
     }
 

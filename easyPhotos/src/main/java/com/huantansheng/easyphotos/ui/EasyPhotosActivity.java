@@ -110,6 +110,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     private View mBottomBar;
 
     private boolean isQ = false;
+    private boolean isTiramisu = false;
 
     public static long startTime = 0;
 
@@ -150,6 +151,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
         adaptationStatusBar();
         loadingDialog = LoadingDialog.get(this);
         isQ = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q;
+        isTiramisu = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
         if (!Setting.onlyStartCamera && null == Setting.imageEngine) {
             finish();
             return;
@@ -212,6 +214,12 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
 
     protected String[] getNeedPermissions() {
         if (Setting.isShowCamera) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return new String[]{Manifest.permission.CAMERA,
+                        Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_MEDIA_AUDIO,
+                        Manifest.permission.READ_MEDIA_VIDEO};
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 return new String[]{Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -220,6 +228,11 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
             return new String[]{Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE};
         } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return new String[]{Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_MEDIA_AUDIO,
+                        Manifest.permission.READ_MEDIA_VIDEO};
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 return new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -307,7 +320,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
         if (cameraIntent.resolveActivity(getPackageManager()) != null ||
                 this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
 
-            if (isQ) {
+            if (isQ || isTiramisu) {
                 photoUri = createImageUri();
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -412,7 +425,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
         switch (resultCode) {
             case RESULT_OK:
                 if (Code.REQUEST_CAMERA == requestCode) {
-                    if (isQ) {
+                    if (isQ || isTiramisu) {
                         onCameraResultForQ();
                         return;
                     }
@@ -471,7 +484,7 @@ public class EasyPhotosActivity extends AppCompatActivity implements AlbumItemsA
     private void addNewPhoto(Photo photo) {
         photo.selectedOriginal = Setting.selectedOriginal;
 
-        if (!isQ) {
+        if (!isQ && !isTiramisu) {
             MediaScannerConnectionUtils.refresh(this, photo.path);
             folderPath = new File(photo.path).getParentFile().getAbsolutePath();
             albumName = StringUtils.getLastPathSegment(folderPath);
